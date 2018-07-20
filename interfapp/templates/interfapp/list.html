@@ -1,0 +1,55 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+         <head>
+                 <meta charset="utf-8">
+		 <title>Uploade</title>   
+		 <link rel="stylesheet" href="{% static 'style.css' %}" />
+         </head>
+         <body>
+		 {% include 'interfapp/menu.html' %}
+
+		  <!-- Upload form. Note enctype attribute! -->
+                 <form action="{% url 'list' %}" method="post" enctype="multipart/form-data">
+                 {% csrf_token %}
+                 <p>{{ form.non_field_errors }}</p>
+                 <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+                 <p>
+                 {{ form.docfile.errors }}
+                 {{ form.docfile }}<p><input type="submit" value="Upload" /></p>
+
+                 </p>
+                                  </form>
+ 
+                 <!-- List of uploaded documents -->
+                 {% if documents %}
+			 <table style="text-align:center"> <!-- style="width:80%;">-->
+				 <thead>
+					<tr>
+						<th width="50%"><!-- style="width:30%;">-->Original</th>
+						<th width="10%"> <!-- style="width:30%;">-->XML</th>
+						<th width="10%"><!-- style="width:30%;">-->RDF</th>
+						<th width="10%"><!-- style="width:10%;">-->Delete</th>
+						<th width="10%"><!--  style="width:10%;">-->Edit</th>
+						<th width="10%"><!--  style="width:10%;">-->Graph</th>
+					</tr>
+				</thead>
+				<tbody>		
+					 {% for document in documents %}
+					 <tr>
+						 <td><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></td>
+						 <td><a href="/{{ document.xmlurl }}">{{ document.xmlurl }}</a></td>
+						 <td><a href="/{{ document.rdfurl }}">{{ document.rdfurl }}</a></td>
+						 <td><a href="{% url 'delete_doc' document.id %}">x</a></td>
+						<td>Edit</td>
+						<td><a href="{% url 'graph' document.id %}">Graph</a></td>
+					 </tr>
+					 {% endfor %}
+			 	</tbody>
+                         </table>
+                 {% else %} 
+                         <p>No documents.</p>
+                 {% endif %}
+         </body>
+</html> 
+

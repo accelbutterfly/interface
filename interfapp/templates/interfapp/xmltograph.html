@@ -1,0 +1,85 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Network | Basic usage</title>
+
+  <!-- <script type="text/javascript" src="vis.js"></script>-->
+  <link href="{% static 'vis-network.min.css' %}" rel="stylesheet" />
+
+  <script src="{% static 'vis.js' %}"></script>
+
+  <style type="text/css">
+    #mynetwork {
+      width: 900px;
+      height: 900px;
+      border: 0px solid lightgray;
+    }
+  </style>
+</head>
+
+<body>
+
+	{% include 'interfapp/menu.html' %}
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        myFunction(this);
+        //alert(this.response);
+    }
+};
+xhttp.open("GET", "/interfapp/media/documents/dogs.xml", true);
+xhttp.send();
+
+
+
+var graphNodes = [];
+var graphEdges = [];
+
+function myFunction(xml) {
+  console.log("It begins");
+  console.log(xml.responseXML);
+    var xmlDoc = xml.responseXML;
+    nodes = xmlDoc.getElementsByTagName("node");
+    for (i = 0; i< nodes.length; i++) {
+      node = nodes.item(i);
+      id = node.getAttribute("id");
+      label = node.childNodes[0].nodeValue;
+      //document.write(node.childNodes[0].nodeValue+id+"<br>");
+      console.log(JSON.stringify({id: parseInt(id), label: label}, null, 4));
+      graphNodes.push({id: parseInt(id), label: label});
+    }
+    edges = xmlDoc.getElementsByTagName("edge");
+    for (i = 0; i< edges.length; i++) {
+      edge = edges.item(i);
+      begin = edge.getAttribute("begin");
+      target = edge.getAttribute("target");
+      label = edge.childNodes[0].nodeValue
+      //document.write(edge.childNodes[0].nodeValue+begin+target+"<br>");
+      graphEdges.push({from: parseInt(begin), to: parseInt(target), label: label});
+    }
+
+    var container = document.getElementById('mynetwork');
+    var data = {
+      nodes: graphNodes,
+      edges: graphEdges
+    };
+    var options = {};
+    var network = new vis.Network(container, data, options);
+    //console.log(graphNodes);
+    //console.log(graphEdges);
+  }
+  //console.log(graphNodes);
+  //console.log(graphEdges);
+    // create a network
+
+</script>
+
+</body>
+</html>
